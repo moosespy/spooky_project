@@ -10,6 +10,9 @@ screen = py.display.set_mode((width, height), py.DOUBLEBUF)
 black = [0, 0, 0]
 crimson = [139, 0, 0]
 dark_purple = [26, 3, 0]
+burn_orange = [255, 69, 0]
+smoky_brown = [15, 5, 4]
+blue = [0, 0, 255]
 
 def gradient(w, h, col_top, col_bot):
     bg_surf = py.Surface((1, 2))
@@ -17,19 +20,49 @@ def gradient(w, h, col_top, col_bot):
     bg_surf.set_at((0, 1), col_bot)
     grad_surf = py.transform.smoothscale(bg_surf, (w, h))
     return grad_surf
+def play_stand():
+    global player_surf
+    body_points = [(0, 0), (40, 0), (40, 40), (0, 40)]
+    player_surf = py.Surface((40, 40), py.SRCALPHA)
+    py.draw.polygon(player_surf, blue, body_points)
+play_stand()
+
+gravity = 1
+player_jumpheight = 20
+y_vel = player_jumpheight
+jumping = False
 
 bg_1 = gradient(width, height, crimson, black)
+bg_2 = gradient(width, height, burn_orange, smoky_brown)
 
+player = player_surf.get_rect(center = (250, 450))
 
-background = bg_1
+background = bg_2
 clock = py.time.Clock()
 run = True
 while run:
+    key = py.key.get_pressed()
     for event in py.event.get():
         if event.type == py.QUIT:
             run = False
+        if event.type == py.KEYDOWN:
+            if event.key == py.K_1:
+                background = bg_1
+            elif event.key == py.K_2:
+                background = bg_2
+    if (key[py.K_UP] or key[py.K_w]):
+        jumping = True    
 
     screen.blit(background, (0, 0))
+    if jumping == True:
+        player.y -= y_vel
+        y_vel -= gravity
+        if y_vel < -player_jumpheight:
+            jumping = False
+            y_vel = player_jumpheight
+
+    screen.blit(player_surf, player)
+
     py.display.flip()
     clock.tick(60)
 
