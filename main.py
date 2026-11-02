@@ -25,7 +25,13 @@ def play_stand():
     body_points = [(0, 0), (40, 0), (40, 40), (0, 40)]
     player_surf = py.Surface((40, 40), py.SRCALPHA)
     py.draw.polygon(player_surf, blue, body_points)
+def play_jump():
+    global pjump_surf
+    jump_points = [(0, 0), (40, 0), (40, 40), (20, 20), (0, 40)]
+    pjump_surf = py.Surface((40, 40), py.SRCALPHA)
+    py.draw.polygon(pjump_surf, blue, jump_points)
 play_stand()
+play_jump()
 
 gravity = 1
 player_jumpheight = 20
@@ -36,6 +42,7 @@ bg_1 = gradient(width, height, crimson, black)
 bg_2 = gradient(width, height, burn_orange, smoky_brown)
 
 player = player_surf.get_rect(center = (250, 450))
+player_jump = pjump_surf.get_rect(center = (250, 450))
 
 background = bg_2
 clock = py.time.Clock()
@@ -55,13 +62,16 @@ while run:
 
     screen.blit(background, (0, 0))
     if jumping == True:
-        player.y -= y_vel
+        player_jump.y -= y_vel
         y_vel -= gravity
         if y_vel < -player_jumpheight:
             jumping = False
             y_vel = player_jumpheight
 
-    screen.blit(player_surf, player)
+        screen.blit(pjump_surf, player_jump)
+    else:
+        screen.blit(player_surf, player)
+
 
     py.display.flip()
     clock.tick(60)
