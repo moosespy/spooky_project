@@ -13,6 +13,7 @@ dark_purple = [26, 3, 0]
 burn_orange = [255, 69, 0]
 smoky_brown = [15, 5, 4]
 blue = [0, 0, 255]
+gray = [128, 128, 128]
 
 def gradient(w, h, col_top, col_bot):
     bg_surf = py.Surface((1, 2))
@@ -33,8 +34,15 @@ def play_jump():
 play_stand()
 play_jump()
 
-gravity = 1
-player_jumpheight = 20
+def platform():
+    global platform_surf
+    platform_points = [(0, 0), (100, 0), (100, 10), (0, 10)]
+    platform_surf = py.Surface((100, 10), py.SRCALPHA)
+    py.draw.polygon(platform_surf, gray, platform_points)
+platform()
+
+gravity = 0.5
+player_jumpheight = 10
 y_vel = player_jumpheight
 jumping = False
 
@@ -43,10 +51,11 @@ bg_2 = gradient(width, height, burn_orange, smoky_brown)
 
 player = player_surf.get_rect(center = (250, 450))
 player_jump = pjump_surf.get_rect(center = (250, 450))
+floor = platform_surf.get_rect(center = (250, 465))
 
 background = bg_2
 clock = py.time.Clock()
-run = True
+run = True 
 while run:
     key = py.key.get_pressed()
     for event in py.event.get():
@@ -58,20 +67,24 @@ while run:
             elif event.key == py.K_2:
                 background = bg_2
     if (key[py.K_UP] or key[py.K_w]):
-        jumping = True    
+        jumping = True
+    if (key[py.K_LEFT] or key[py.K_a]):
+        player.x -= 1
+        player_jump.x -= 1
+    if (key[py.K_RIGHT] or key[py.K_d]):
+        player.x += 1
+        player_jump.x += 1
 
     screen.blit(background, (0, 0))
+    screen.blit(platform_surf, floor)
     if jumping == True:
-        player_jump.y -= y_vel
+        player.y -= y_vel
         y_vel -= gravity
-        if y_vel < -player_jumpheight:
+        if player.colliderect(floor):
             jumping = False
             y_vel = player_jumpheight
-
-        screen.blit(pjump_surf, player_jump)
-    else:
-        screen.blit(player_surf, player)
-
+            player.y -= 10
+    screen.blit(player_surf, player)
 
     py.display.flip()
     clock.tick(60)
