@@ -23,16 +23,10 @@ def gradient(w, h, col_top, col_bot):
     return grad_surf
 def play_stand():
     global player_surf
-    body_points = [(0, 0), (40, 0), (40, 40), (0, 40)]
-    player_surf = py.Surface((40, 40), py.SRCALPHA)
+    body_points = [(0, 0), (20, 0), (20, 20), (0, 20)]
+    player_surf = py.Surface((20, 20), py.SRCALPHA)
     py.draw.polygon(player_surf, blue, body_points)
-def play_jump():
-    global pjump_surf
-    jump_points = [(0, 0), (40, 0), (40, 40), (20, 20), (0, 40)]
-    pjump_surf = py.Surface((40, 40), py.SRCALPHA)
-    py.draw.polygon(pjump_surf, blue, jump_points)
 play_stand()
-play_jump()
 
 def platform():
     global platform_surf
@@ -50,14 +44,18 @@ bg_1 = gradient(width, height, crimson, black)
 bg_2 = gradient(width, height, burn_orange, smoky_brown)
 
 player = player_surf.get_rect(center = (250, 450))
-player_jump = pjump_surf.get_rect(center = (250, 450))
-floor = platform_surf.get_rect(center = (250, 465))
+platforms = [
+    platform_surf.get_rect(center = (250, 465)),
+    platform_surf.get_rect(center = (100, 405)),
+    platform_surf.get_rect(center = (250, 300))
+]
 
 background = bg_2
 clock = py.time.Clock()
-run = True 
+run = True
 while run:
     key = py.key.get_pressed()
+    player.y += y_vel
     for event in py.event.get():
         if event.type == py.QUIT:
             run = False
@@ -66,24 +64,29 @@ while run:
                 background = bg_1
             elif event.key == py.K_2:
                 background = bg_2
-    if (key[py.K_UP] or key[py.K_w]):
+    if (key[py.K_UP] or key[py.K_w] or key[py.K_SPACE]) and jumping == False:
         jumping = True
+        y_vel = -1 * player_jumpheight
+        player.y += y_vel
     if (key[py.K_LEFT] or key[py.K_a]):
-        player.x -= 1
-        player_jump.x -= 1
+        player.x -= 2
     if (key[py.K_RIGHT] or key[py.K_d]):
-        player.x += 1
-        player_jump.x += 1
-
+        player.x += 2
     screen.blit(background, (0, 0))
-    screen.blit(platform_surf, floor)
+    for i in platforms:
+        screen.blit(platform_surf, i)
     if jumping == True:
-        player.y -= y_vel
-        y_vel -= gravity
-        if player.colliderect(floor):
+        if y_vel < 10:
+            y_vel += gravity
+    for i in platforms:
+        if player.colliderect(i):
             jumping = False
             y_vel = player_jumpheight
             player.y -= 10
+    if player.y > height:
+        player.y = 0
+    if player.y < 0:
+        player.y = height
     screen.blit(player_surf, player)
 
     py.display.flip()
