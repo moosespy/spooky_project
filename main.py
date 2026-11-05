@@ -8,6 +8,7 @@ height = 500
 screen = py.display.set_mode((width, height), py.DOUBLEBUF)
 
 black = [0, 0, 0]
+red = [255, 0, 0]
 crimson = [139, 0, 0]
 dark_purple = [26, 3, 0]
 burn_orange = [255, 69, 0]
@@ -35,6 +36,13 @@ def platform():
     py.draw.polygon(platform_surf, gray, platform_points)
 platform()
 
+def obstacle():
+    global obst_surf
+    obst_points = [(0, 0), ((10, 1), (20, 0), (19, 10), (20, 20), (10, 19), (0, 20), (1, 10))]
+    obst_surf = py.Surface((20, 20), py.SRCALPHA)
+    py.draw.polygon(obst_surf, red, obst_points)
+obstacle()
+
 gravity = 0.5
 player_jumpheight = 10
 y_vel = player_jumpheight
@@ -44,10 +52,13 @@ bg_1 = gradient(width, height, crimson, black)
 bg_2 = gradient(width, height, burn_orange, smoky_brown)
 
 player = player_surf.get_rect(center = (250, 450))
+spike = obst_surf.get_rect(center = (250, 400))
 platforms = [
     platform_surf.get_rect(center = (250, 465)),
     platform_surf.get_rect(center = (100, 405)),
-    platform_surf.get_rect(center = (250, 300))
+    platform_surf.get_rect(center = (250, 300)),
+    platform_surf.get_rect(center = (400, 200)),
+    platform_surf.get_rect(center = (450, 450))
 ]
 
 background = bg_2
