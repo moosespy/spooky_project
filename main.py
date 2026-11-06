@@ -15,6 +15,7 @@ burn_orange = [255, 69, 0]
 smoky_brown = [15, 5, 4]
 blue = [0, 0, 255]
 gray = [128, 128, 128]
+gold = [229, 169, 11]
 
 def gradient(w, h, col_top, col_bot):
     bg_surf = py.Surface((1, 2))
@@ -43,6 +44,13 @@ def obstacle():
     py.draw.polygon(obst_surf, red, obst_points)
 obstacle()
 
+def goal():
+    global goal_surf
+    goal_points = [(10, 0), (8, 8), (0, 10), (8, 12), (10, 20), (12, 12), (20, 10), (12, 8)]
+    goal_surf = py.Surface((20, 20), py.SRCALPHA)
+    py.draw.polygon(goal_surf, gold, goal_points)
+goal()
+
 gravity = 0.5
 player_jumpheight = 10
 y_vel = player_jumpheight
@@ -52,6 +60,7 @@ bg_1 = gradient(width, height, crimson, black)
 bg_2 = gradient(width, height, burn_orange, smoky_brown)
 
 player = player_surf.get_rect(center = (250, 450))
+target = goal_surf.get_rect(center = (490, 100))
 obstacles = [
     obst_surf.get_rect(center = (250, 400))
 ]
@@ -108,10 +117,14 @@ while run:
             player.y = 0
         if player.y < 0:
             player.y = height
+        if player.colliderect(target):
+            gamestate = 'win'
     elif gamestate == 'game_over':
         run = False
+    elif gamestate == 'win':
+        run = False
     screen.blit(player_surf, player)
-
+    screen.blit(goal_surf, target)
     py.display.flip()
     clock.tick(60)
 
