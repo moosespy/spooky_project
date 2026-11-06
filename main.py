@@ -59,20 +59,25 @@ jumping = False
 bg_1 = gradient(width, height, crimson, black)
 bg_2 = gradient(width, height, burn_orange, smoky_brown)
 
-player = player_surf.get_rect(center = (250, 450))
+player = player_surf.get_rect(center = (30, 450))
 target = goal_surf.get_rect(center = (490, 100))
 obstacles = [
-    obst_surf.get_rect(center = (250, 400))
+    obst_surf.get_rect(center = (0, 445)),
+    obst_surf.get_rect(center = (300, 445)),
+    obst_surf.get_rect(center = (300, 420)),
+    obst_surf.get_rect(center = (300, 395)),
 ]
-
+for i in range(11):
+    obstacles.append(obst_surf.get_rect(center = (25 * i, 420)))
+for i in range(5):
+    obstacles.append(obst_surf.get_rect(center = (25 * i + 200, 280)))
 platforms = [
-    platform_surf.get_rect(center = (250, 465)),
-    platform_surf.get_rect(center = (100, 405)),
+    platform_surf.get_rect(center = (200, 400)),
     platform_surf.get_rect(center = (250, 300)),
     platform_surf.get_rect(center = (400, 200)),
-    platform_surf.get_rect(center = (450, 450))
 ]
-
+for i in range(5):
+    platforms.append(platform_surf.get_rect(center = (100 * i + 50, 465)))
 gamestate = 'playing'
 background = bg_2
 clock = py.time.Clock()
@@ -117,6 +122,10 @@ while run:
             player.y = 0
         if player.y < 0:
             player.y = height
+        if player.x > width * 0.99:
+            player.x = 0
+        if player.x < 0:
+            player.x = width * 0.99
         if player.colliderect(target):
             gamestate = 'win'
     elif gamestate == 'game_over':
