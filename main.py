@@ -17,6 +17,9 @@ blue = [0, 0, 255]
 gray = [128, 128, 128]
 gold = [229, 169, 11]
 
+restart_text = font.render("You won! Press 'r' to restart.", True, black)
+game_over_text = font.render("You hit an obstacle. Press 'r' to restart.", True, black)
+
 def gradient(w, h, col_top, col_bot):
     bg_surf = py.Surface((1, 2))
     bg_surf.set_at((0, 0), col_top)
@@ -59,13 +62,13 @@ jumping = False
 bg_1 = gradient(width, height, crimson, black)
 bg_2 = gradient(width, height, burn_orange, smoky_brown)
 
-player = player_surf.get_rect(center = (30, 450))
+player = player_surf.get_rect(center = (30, 451))
 target = goal_surf.get_rect(center = (490, 100))
 obstacles = [
     obst_surf.get_rect(center = (0, 445)),
     obst_surf.get_rect(center = (300, 445)),
     obst_surf.get_rect(center = (300, 420)),
-    obst_surf.get_rect(center = (300, 395)),
+    obst_surf.get_rect(center = (300, 395))
 ]
 for i in range(10):
     obstacles.append(obst_surf.get_rect(center = (25 * (i + 1), 420)))
@@ -74,7 +77,7 @@ for i in range(13):
 for i in range(4):
     obstacles.append(obst_surf.get_rect(center = (0, 25 * (i+15) - 5)))
 for i in range(16):
-    obstacles.append(obst_surf.get_rect(center = (25 * i + 125, 270)))
+   obstacles.append(obst_surf.get_rect(center = (25 * i + 125, 245)))
 for i in range(5):
     obstacles.append(obst_surf.get_rect(center = (125, 25 * i + 295)))
 platforms = [
@@ -89,13 +92,24 @@ platforms = [
 ]
 for i in range(5):
     platforms.append(platform_surf.get_rect(center = (100 * i + 50, 465)))
+
+def out_of_platform():
+    move_out = 1
+    while move_out != 0:
+        player.y -= move_out
+        if player.colliderect(i):
+            y_vel = player_jumpheight
+            move_out = round(move_out * 1.2)
+        else:
+            move_out = 0
+    player.y -= 10
+
 gamestate = 'playing'
 background = bg_2
 clock = py.time.Clock()
 run = True
 while run:
     key = py.key.get_pressed()
-    player.y += y_vel
     for event in py.event.get():
         if event.type == py.QUIT:
             run = False
@@ -118,6 +132,9 @@ while run:
             player.x -= 2
         if (key[py.K_RIGHT] or key[py.K_d]):
             player.x += 2
+        if (key[py.K_g]):
+            player.x = 250
+            player.y = 5
         if jumping == True:
             if y_vel < 10:
                 y_vel += gravity
@@ -125,7 +142,7 @@ while run:
             if player.colliderect(i):
                 jumping = False
                 y_vel = player_jumpheight
-                player.y -= 10
+                out_of_platform()
         for i in obstacles:
             if player.colliderect(i):
                 gamestate = 'game_over'
@@ -139,10 +156,19 @@ while run:
             player.x = width * 0.99
         if player.colliderect(target):
             gamestate = 'win'
+        player.y += y_vel
     elif gamestate == 'game_over':
-        run = False
+        screen.blit(game_over_text, (1, 1))
+        if (key[py.K_r]):
+            gamestate = 'playing'
+            player.x = 30
+            player.y = 449
     elif gamestate == 'win':
-        run = False
+        screen.blit(restart_text, (1, 1))
+        if (key[py.K_r]):
+            gamestate = 'playing'
+            player.x = 30
+            player.y = 450
     screen.blit(player_surf, player)
     screen.blit(goal_surf, target)
     py.display.flip()
