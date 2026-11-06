@@ -73,15 +73,19 @@ for i in range(13):
     obstacles.append(obst_surf.get_rect(center = (0, 25 * i - 5)))
 for i in range(4):
     obstacles.append(obst_surf.get_rect(center = (0, 25 * (i+15) - 5)))
+for i in range(16):
+    obstacles.append(obst_surf.get_rect(center = (25 * i + 125, 270)))
 for i in range(5):
-    obstacles.append(obst_surf.get_rect(center = (25 * i + 200, 280)))
+    obstacles.append(obst_surf.get_rect(center = (125, 25 * i + 295)))
 platforms = [
     platform_surf.get_rect(center = (200, 400)),
     platform_surf.get_rect(center = (250, 300)),
     platform_surf.get_rect(center = (400, 200)),
     platform_surf.get_rect(center = (450, 350)),
     platform_surf.get_rect(center = (50, 350)),
-    platform_surf.get_rect(center = (100, 400))
+    platform_surf.get_rect(center = (125, 250)),
+    platform_surf.get_rect(center = (200, 150)),
+    platform_surf.get_rect(center = (275, 50)),
 ]
 for i in range(5):
     platforms.append(platform_surf.get_rect(center = (100 * i + 50, 465)))
