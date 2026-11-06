@@ -38,7 +38,7 @@ platform()
 
 def obstacle():
     global obst_surf
-    obst_points = [(0, 0), ((10, 1), (20, 0), (19, 10), (20, 20), (10, 19), (0, 20), (1, 10))]
+    obst_points = [(0, 0), (10, 5), (20, 0), (15, 10), (20, 20), (10, 15), (0, 20), (5, 10)]
     obst_surf = py.Surface((20, 20), py.SRCALPHA)
     py.draw.polygon(obst_surf, red, obst_points)
 obstacle()
@@ -52,7 +52,10 @@ bg_1 = gradient(width, height, crimson, black)
 bg_2 = gradient(width, height, burn_orange, smoky_brown)
 
 player = player_surf.get_rect(center = (250, 450))
-spike = obst_surf.get_rect(center = (250, 400))
+obstacles = [
+    obst_surf.get_rect(center = (250, 400))
+]
+
 platforms = [
     platform_surf.get_rect(center = (250, 465)),
     platform_surf.get_rect(center = (100, 405)),
@@ -61,6 +64,7 @@ platforms = [
     platform_surf.get_rect(center = (450, 450))
 ]
 
+gamestate = 'playing'
 background = bg_2
 clock = py.time.Clock()
 run = True
@@ -75,29 +79,37 @@ while run:
                 background = bg_1
             elif event.key == py.K_2:
                 background = bg_2
-    if (key[py.K_UP] or key[py.K_w] or key[py.K_SPACE]) and jumping == False:
-        jumping = True
-        y_vel = -1 * player_jumpheight
-        player.y += y_vel
-    if (key[py.K_LEFT] or key[py.K_a]):
-        player.x -= 2
-    if (key[py.K_RIGHT] or key[py.K_d]):
-        player.x += 2
     screen.blit(background, (0, 0))
     for i in platforms:
         screen.blit(platform_surf, i)
-    if jumping == True:
-        if y_vel < 10:
-            y_vel += gravity
-    for i in platforms:
-        if player.colliderect(i):
-            jumping = False
-            y_vel = player_jumpheight
-            player.y -= 10
-    if player.y > height:
-        player.y = 0
-    if player.y < 0:
-        player.y = height
+    for i in obstacles:
+        screen.blit(obst_surf, i)
+    if gamestate == 'playing':
+        if (key[py.K_UP] or key[py.K_w] or key[py.K_SPACE]) and jumping == False:
+            jumping = True
+            y_vel = -1 * player_jumpheight
+            player.y += y_vel
+        if (key[py.K_LEFT] or key[py.K_a]):
+            player.x -= 2
+        if (key[py.K_RIGHT] or key[py.K_d]):
+            player.x += 2
+        if jumping == True:
+            if y_vel < 10:
+                y_vel += gravity
+        for i in platforms:
+            if player.colliderect(i):
+                jumping = False
+                y_vel = player_jumpheight
+                player.y -= 10
+        for i in obstacles:
+            if player.colliderect(i):
+                gamestate = 'game_over'
+        if player.y > height:
+            player.y = 0
+        if player.y < 0:
+            player.y = height
+    elif gamestate == 'game_over':
+        run = False
     screen.blit(player_surf, player)
 
     py.display.flip()
