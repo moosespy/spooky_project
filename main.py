@@ -26,12 +26,12 @@ def gradient(w, h, col_top, col_bot):
     bg_surf.set_at((0, 1), col_bot)
     grad_surf = py.transform.smoothscale(bg_surf, (w, h))
     return grad_surf
-def play_stand():
+def draw_player():
     global player_surf
     body_points = [(0, 0), (20, 0), (20, 20), (0, 20)]
     player_surf = py.Surface((20, 20), py.SRCALPHA)
     py.draw.polygon(player_surf, blue, body_points)
-play_stand()
+draw_player()
 
 def platform():
     global platform_surf
@@ -80,6 +80,8 @@ for i in range(16):
    obstacles.append(obst_surf.get_rect(center = (25 * i + 125, 245)))
 for i in range(5):
     obstacles.append(obst_surf.get_rect(center = (125, 25 * i + 295)))
+for i in range(20):
+    obstacles.append(obst_surf.get_rect(center = (25 * i, 495)))
 platforms = [
     platform_surf.get_rect(center = (200, 400)),
     platform_surf.get_rect(center = (250, 300)),
@@ -92,17 +94,6 @@ platforms = [
 ]
 for i in range(5):
     platforms.append(platform_surf.get_rect(center = (100 * i + 50, 465)))
-
-def out_of_platform():
-    move_out = 1
-    while move_out != 0:
-        player.y -= move_out
-        if player.colliderect(i):
-            y_vel = player_jumpheight
-            move_out = round(move_out * 1.2)
-        else:
-            move_out = 0
-    player.y -= 10
 
 gamestate = 'playing'
 background = bg_2
@@ -124,6 +115,7 @@ while run:
     for i in obstacles:
         screen.blit(obst_surf, i)
     if gamestate == 'playing':
+        player.y += y_vel
         if (key[py.K_UP] or key[py.K_w] or key[py.K_SPACE]) and jumping == False:
             jumping = True
             y_vel = -1 * player_jumpheight
@@ -142,7 +134,7 @@ while run:
             if player.colliderect(i):
                 jumping = False
                 y_vel = player_jumpheight
-                out_of_platform()
+                player.bottom = i.top
         for i in obstacles:
             if player.colliderect(i):
                 gamestate = 'game_over'
@@ -150,13 +142,12 @@ while run:
             player.y = 0
         if player.y < 0:
             player.y = height
-        if player.x > width * 0.99:
-            player.x = 0
+        if player.x > width:
+            player.x = 1
         if player.x < 0:
-            player.x = width * 0.99
+            player.x = width - 1
         if player.colliderect(target):
             gamestate = 'win'
-        player.y += y_vel
     elif gamestate == 'game_over':
         screen.blit(game_over_text, (1, 1))
         if (key[py.K_r]):
