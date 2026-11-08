@@ -105,6 +105,8 @@ for i in range(20):
     obstacles.append(obst_surf.get_rect(center = (25 * i, 495)))
 
 spear = tri_surf.get_rect(center = (450, 50))
+float_platform = platform_surf.get_rect(center = (275, 50))
+fplat_limit1, fplat_limit2, fplat_dir = 100, 400, 'left'
 
 platforms = [
     platform_surf.get_rect(center = (200, 400)),
@@ -114,7 +116,6 @@ platforms = [
     platform_surf.get_rect(center = (50, 350)),
     platform_surf.get_rect(center = (125, 250)),
     platform_surf.get_rect(center = (200, 150)),
-    platform_surf.get_rect(center = (275, 50)),
 ]
 for i in range(5):
     platforms.append(platform_surf.get_rect(center = (100 * i + 50, 465)))
@@ -139,6 +140,7 @@ while run:
     for i in obstacles:
         screen.blit(obst_surf, i)
     screen.blit(tri_surf, spear)
+    screen.blit(platform_surf, float_platform)
     for _ in range(1):
         particles.append(draw_particle())
     new_particles = []
@@ -172,6 +174,10 @@ while run:
                 jumping = False
                 y_vel = player_jumpheight
                 player.bottom = i.top
+        if player.colliderect(float_platform):
+            jumping = False
+            y_vel = player_jumpheight
+            player.bottom = float_platform.top
         for i in obstacles:
             if player.colliderect(i):
                 gamestate = 'game_over'
@@ -179,6 +185,14 @@ while run:
         if spear.x < 0:
             spear.x = width
             spear.y = random.randint(0, 500)
+        if fplat_dir == 'left':
+            float_platform.x -= 3
+            if float_platform.x <= fplat_limit1:
+                fplat_dir = 'right'
+        elif fplat_dir == 'right':
+            float_platform.x += 3
+            if float_platform.x >= fplat_limit2:
+                fplat_dir = 'left'
         if player.y > height:
             player.y = 0
         if player.y < 0:
