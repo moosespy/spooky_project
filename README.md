@@ -11,7 +11,7 @@ The obstacles are red spikes and black spears. The spikes exist in mid-air, and 
 
 The platforms are interesting - you can go through the bottom of them, and you have to be careful about that, as holding the jump key while going through one could make you jump again, and you might not want that. Anyways, you can land on the top of them fine, and there is one platform that moves pretty fast, faster than the player can move, so you have to time it pretty well.
 
-This game is demoed on codehs.com here: https://codehs.com/sandbox/trana0357/spooky-project/run. codehs requires you to hit the run button when you start, so hit the button, and the game graphics should load up. Once they do, you can start playing as I have shown!
+This game is demoed on codehs.com here: https://codehs.com/sandbox/trana0357/spooky-project/run. codehs requires you to hit the run button when you start, so hit the button, and the game graphics should load up. Once they do, you might have to click on the screen to make sure that codehs reads your key inputs from the screen and not from the terminal. If the screen is too small, press 'stop' and 'run' again, and it should work fine after that (unless you're using a really small device). If all this works, you can start playing as I have shown!
 
 This is my second pygame game, and I'm pretty proud of it! Thanks for checking out my project!
 
